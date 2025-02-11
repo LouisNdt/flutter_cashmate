@@ -1,4 +1,5 @@
 import 'package:cashmate/home.dart';
+import 'package:cashmate/main.dart';
 import 'package:flutter/material.dart';
 
 class BudgetCreation extends StatefulWidget {
@@ -11,14 +12,16 @@ class BudgetCreation extends StatefulWidget {
 
 class _BudgetCreationState extends State<BudgetCreation> {
 
-  final List<String> categories = ["Logement", "Alimentation", "Transport", "Esthétique", "Abonnements", "Loisirs", "Recap"];
+  final List<String> categories = ["Salaire", "Autres revenus","Logement", "Alimentation", "Transport", "Esthétique", "Abonnements", "Loisirs", "Recap"];
   final PageController _pageController = PageController();
   final List<Map<String, dynamic>> transactions = [];
+  double totalRevenus =  0;
+  double totalDepenses = 0;
   int _currentPage = 0;
 
   @override
   Widget build(BuildContext context) {
-    double totalBudget = _calculateTotalBudget();
+
     return Scaffold(
         backgroundColor: const Color.fromRGBO(59, 15, 82, 1.0),
         appBar: AppBar(
@@ -32,11 +35,11 @@ class _BudgetCreationState extends State<BudgetCreation> {
                 controller: _pageController,
                 itemCount: categories.length,
                   itemBuilder: (context, index) {
-                    return _buildCategoryPage(categories[index], totalBudget);
+                    return _buildCategoryPage(categories[index], totalRevenus, totalDepenses);
                   }
               )
           ),
-          Text("Budget total : $totalBudget", style: const TextStyle(color: Colors.white, fontSize: 14),),
+          Text("Dépenses totales : $totalDepenses", style: const TextStyle(color: Colors.white, fontSize: 14),),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -54,9 +57,9 @@ class _BudgetCreationState extends State<BudgetCreation> {
     );
   }
 
-  Widget _buildCategoryPage(String category, double totalBudget) {
+  Widget _buildCategoryPage(String category, double totalRevenus, double totalDepenses) {
     if (category == "Recap") {
-      return _buildRecapPage(totalBudget); // Affiche la page de résumé
+      return _buildRecapPage(totalRevenus); // Affiche la page de résumé
     }
 
     return Padding(
@@ -74,6 +77,9 @@ class _BudgetCreationState extends State<BudgetCreation> {
               onSubmitted: (value) => _nextPage(),
               onChanged: (value) {
                 setState(() {
+                  if(category=="Salaire" || category=="Autres revenus"){
+                    _updateTransaction(category, double.tryParse(value) ?? 0.0, true);
+                  }
                   _updateTransaction(category, double.tryParse(value) ?? 0.0, false);
                 });
               },
@@ -84,14 +90,14 @@ class _BudgetCreationState extends State<BudgetCreation> {
     );
   }
 
-  Widget _buildRecapPage(double totalBudget){
+  Widget _buildRecapPage(double totalDepenses){
     return Padding(padding: EdgeInsets.all(20),
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text("Total des dépenses : $totalBudget", style: TextStyle(color: Colors.white, fontSize: 20),),
+        Text("Total des dépenses : $totalDepenses", style: TextStyle(color: Colors.white, fontSize: 20),),
         ElevatedButton(onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => Home(transactions: transactions)));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => MyApp(transactions: transactions)));
         }, child: Text("Voir le dashboard"))
       ],
     ),
@@ -124,13 +130,15 @@ class _BudgetCreationState extends State<BudgetCreation> {
       // Mise à jour de la valeur existante
       transactions[existingIndex]['amount'] = amount;
     } else {
+      if(isRevenue==false){
+        totalDepenses += amount;
+      } else {
+        totalRevenus += amount;
+      }
       // Ajout d'une nouvelle transaction
       transactions.add({'category': category, 'amount': amount, 'isRevenue': isRevenue});
     }
   }
-
-  double _calculateTotalBudget() {
-    return transactions.fold(0.0, (sum, transaction) => sum + transaction['amount']);
-  }
+  
 
 }

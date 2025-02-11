@@ -4,11 +4,13 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const MyApp(transactions: [],));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({super.key, required this.transactions});
+  final List<Map<String, dynamic>> transactions; // Ajoute cette ligne
+
 
   @override
   Widget build(BuildContext context) {
@@ -18,13 +20,14 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Cash Mate'),
+      home: MyHomePage(title: 'Cash Mate', transactions: transactions),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  const MyHomePage({super.key, required this.title, required this.transactions});
+  final List<Map<String, dynamic>> transactions; // Ajoute cette ligne
 
 
   final String title;
@@ -35,7 +38,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0; // Index de la page actuelle
-  List<Map<String, dynamic>> transactions = []; // Stocke les transactions
+  late List<Map<String, dynamic>> transactions;
 
   void _addTransaction(Map<String, dynamic> transaction) {
     setState(() {
@@ -43,6 +46,11 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  @override
+  void initState() {
+    super.initState();
+    transactions = List.from(widget.transactions); // ✅ Initialisation ici
+  }
 
   // Changer l'index lorsqu'on clique sur un onglet
   void _onItemTapped(int index) {

@@ -107,25 +107,6 @@ class _Home extends State<Home> {
                         )
 
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        FilledButton(onPressed: () {
-                          _showAddTransactionDialog(context, true);
-                        },
-                          child: const Text(
-                              "Ajouter mes revenus"
-                          ),
-                        ),
-                        FilledButton(onPressed: () {
-                          _showAddTransactionDialog(context, false);
-                        },
-                          child: const Text(
-                              "Ajouter mes dépenses"
-                          ),
-                        ),
-                      ],
-                    ),
                     ElevatedButton(
                         onPressed: (){
                           Navigator.push(context, MaterialPageRoute(builder: (context) => const BudgetCreation()));

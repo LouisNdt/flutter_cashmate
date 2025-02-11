@@ -56,7 +56,7 @@ class _Operations extends State<Operations> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           Text(
-                            transaction["description"],
+                            transaction["category"],
                             style: TextStyle(
                               fontSize: 18,
                               color: Theme.of(context).primaryColorLight,
