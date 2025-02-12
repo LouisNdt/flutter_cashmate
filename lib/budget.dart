@@ -1,4 +1,3 @@
-import 'package:cashmate/home.dart';
 import 'package:cashmate/main.dart';
 import 'package:cashmate/model/Transaction.dart';
 import 'package:flutter/material.dart';
@@ -40,9 +39,7 @@ class _BudgetCreationState extends State<BudgetCreation> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-        backgroundColor: const Color.fromRGBO(59, 15, 82, 1.0),
         appBar: AppBar(
-          backgroundColor: const Color.fromRGBO(59, 15, 82, 1.0),
       ),
       body: Column(
         children: [
@@ -56,7 +53,7 @@ class _BudgetCreationState extends State<BudgetCreation> {
                   }
               )
           ),
-          Text("Dépenses totales : $totalDepenses", style: const TextStyle(color: Colors.white, fontSize: 14),),
+          Text("Dépenses totales : $totalDepenses", style: const TextStyle(fontSize: 14),),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -84,12 +81,11 @@ class _BudgetCreationState extends State<BudgetCreation> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(category, style: TextStyle(color: Colors.white, fontSize: 18),),
+          Text(category, style: TextStyle(fontSize: 18),),
           SizedBox(
             width: 200,
             child: TextField(
               textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.white),
               keyboardType: TextInputType.number,
               onSubmitted: (value) => _nextPage(),
               onChanged: (value) {
@@ -112,7 +108,7 @@ class _BudgetCreationState extends State<BudgetCreation> {
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text("Total des dépenses : $totalDepenses", style: TextStyle(color: Colors.white, fontSize: 20),),
+        Text("Total des dépenses : $totalDepenses", style: TextStyle(fontSize: 20),),
         ElevatedButton(onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) => MyApp(transactions: transactions)));
         }, child: Text("Voir le dashboard"))

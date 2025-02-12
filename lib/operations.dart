@@ -27,24 +27,18 @@ class _Operations extends State<Operations> {
     int index = widget.transactions.length;
     return Scaffold(
         extendBodyBehindAppBar: true,
-        appBar: AppBar(backgroundColor: const Color.fromRGBO(59, 15, 82, 1.0),
-        ),
-        backgroundColor: const Color.fromRGBO(59, 15, 82, 1.0),
+        appBar: null,
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
-            const Text(
-              "Liste des Transactions",
-              style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
-            ),
             const SizedBox(height: 10),
             Expanded(
               child: widget.transactions.isEmpty
                   ? const Center(
                 child: Text(
                   "Aucune transaction enregistrée",
-                  style: TextStyle(color: Colors.white, fontSize: 18),
+                  style: TextStyle(fontSize: 18),
                 ),
               )
                   : ListView.builder(
@@ -58,9 +52,8 @@ class _Operations extends State<Operations> {
                         children: [
                           Text(
                             transaction.description,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 18,
-                              color: Theme.of(context).primaryColorLight,
                             ),
                           ),
                           Text(
@@ -69,8 +62,9 @@ class _Operations extends State<Operations> {
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                               color: transaction.isRevenu
-                                  ? Colors.green
-                                  : Colors.red,
+                                  ? Color.fromRGBO(102, 187, 106, 1)
+
+                              : Color.fromRGBO(239, 83, 80, 1),
                             ),
                           ),
                           IconButton(onPressed: (){
@@ -84,7 +78,6 @@ class _Operations extends State<Operations> {
                         thickness: 2,
                         indent: 40,
                         endIndent: 40,
-                        color: Colors.white,
                       ),
                     ],
                   );

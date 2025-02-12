@@ -44,15 +44,15 @@ class _Home extends State<Home> {
       }
     });
 
-    List<PieChartSectionData> pieChartSections = widget.transactions.map((transaction) => buildSectionPieChart(transaction))
+    List<PieChartSectionData> pieChartSections = widget.transactions.where((transaction) => transaction.isRevenu==false).map((transaction) => buildSectionPieChart(transaction))
         .toList();
 
     double difference = totalAmountRevenus - totalAmountDepenses;
 
     if(totalAmountRevenus > totalAmountDepenses) {
-      symbolColor = Colors.green;
+      symbolColor = Color.fromRGBO(102, 187, 106, 1);
     } else if (totalAmountRevenus < totalAmountDepenses) {
-      symbolColor = Colors.red;
+      symbolColor = Color.fromRGBO(239, 83, 80, 1);
     } else {
       symbolColor  = Colors.white;
     }
@@ -60,14 +60,13 @@ class _Home extends State<Home> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: null,
-      backgroundColor: const Color.fromRGBO(59, 15, 82, 1.0),
       body: Stack(
           children: [
             Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    const Text("Cash Mate", style: TextStyle(color: Colors.white, fontSize: 28),),
+                    const Text("Cash Mate", style: TextStyle(fontSize: 28),),
                     SizedBox(
                         height: 250, // Définir une hauteur pour le PieChart
                         child: Stack(
@@ -93,7 +92,7 @@ class _Home extends State<Home> {
                           Navigator.push(context, MaterialPageRoute(builder: (context) => const BudgetCreation()));
                         },
                         child: Text("Créer mon budget")),
-                    const Text("Estime rapidement ta capacité d'épargne mensuelle !", style: TextStyle(color: Colors.white),)
+                    const Text("Estime rapidement ta capacité d'épargne mensuelle !",)
                   ],
                 )
             ),
@@ -116,5 +115,6 @@ class _Home extends State<Home> {
       ),
     );
   }
+
 
 }

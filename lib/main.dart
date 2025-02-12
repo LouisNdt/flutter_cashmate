@@ -1,17 +1,15 @@
 import 'package:cashmate/model/Transaction.dart';
 import 'package:cashmate/operations.dart';
 import 'package:cashmate/home.dart';
-import 'package:fl_chart/fl_chart.dart';
+import 'package:cashmate/theme/dark.dart';
+import 'package:cashmate/theme/light.dart';
 import 'package:flutter/material.dart';
 
 void main() {
   runApp(const MyApp(transactions: [],));
 }
 
-// TODO : Remplacer la liste de transactions par deux classes model, une dépense et une revenu
-// TODO : Revoir couleur background
 // TODO : clavier number ne permet de cliquer sur "entrée" pour passer à la prochaine "slide"
-// TODO : Progress bar ne se met pas à jour avec le swipe
 // TODO : Finaliser le piechart pour voir clairement les catégories
 
 class MyApp extends StatelessWidget {
@@ -24,9 +22,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Cash Mate',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-      ),
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      themeMode: ThemeMode.system,
       home: MyHomePage(title: 'Cash Mate', transactions: transactions),
     );
   }
@@ -76,7 +74,6 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: null,
-      backgroundColor: const Color.fromRGBO(59, 15, 82, 1.0),
       body: IndexedStack(
         index: _selectedIndex,
         children: pages,
@@ -84,7 +81,6 @@ class _MyHomePageState extends State<MyHomePage> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        backgroundColor: const Color.fromRGBO(59, 15, 82, 1.0),
           items: const [
             BottomNavigationBarItem(
               icon: Icon(Icons.home),
