@@ -1,5 +1,6 @@
 import 'package:cashmate/home.dart';
 import 'package:cashmate/main.dart';
+import 'package:cashmate/model/Transaction.dart';
 import 'package:flutter/material.dart';
 
 class BudgetCreation extends StatefulWidget {
@@ -14,7 +15,7 @@ class _BudgetCreationState extends State<BudgetCreation> {
 
   final List<String> categories = ["Salaire", "Autres revenus","Logement", "Alimentation", "Transport", "Esthétique", "Abonnements", "Loisirs", "Recap"];
   final PageController _pageController = PageController();
-  final List<Map<String, dynamic>> transactions = [];
+  final List<Transaction> transactions = [];
   double totalRevenus =  0;
   double totalDepenses = 0;
   int _currentPage = 0;
@@ -122,23 +123,23 @@ class _BudgetCreationState extends State<BudgetCreation> {
     }
   }
 
-  void _updateTransaction(String category, double amount, bool isRevenue) {
+  void _updateTransaction(String category, double amount, bool isRevenu) {
     // Vérifier si la catégorie existe déjà
-    final existingIndex = transactions.indexWhere((t) => t['category'] == category);
+    final existingIndex = transactions.indexWhere((t) => t.description == category);
 
     if (existingIndex != -1) {
       // Mise à jour de la valeur existante
-      transactions[existingIndex]['amount'] = amount;
+      transactions[existingIndex].amount = amount;
     } else {
-      if(isRevenue==false){
+      if(isRevenu==false){
         totalDepenses += amount;
       } else {
         totalRevenus += amount;
       }
       // Ajout d'une nouvelle transaction
-      transactions.add({'category': category, 'amount': amount, 'isRevenue': isRevenue});
+      transactions.add(new Transaction(description: category, amount: amount, isRevenu: isRevenu));
     }
   }
-  
+
 
 }

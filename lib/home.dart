@@ -1,10 +1,11 @@
 import 'package:cashmate/budget.dart';
+import 'package:cashmate/model/Transaction.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key, required this.transactions});
-  final List<Map<String, dynamic>> transactions; // Ajoute cette ligne
+  final List<Transaction> transactions; // Ajoute cette ligne
 
 
   @override
@@ -28,20 +29,23 @@ class _Home extends State<Home> {
   Widget build(BuildContext context) {
     Color symbolColor;
     double totalAmountRevenus = widget.transactions.fold(0.0, (sum, transaction) {
-      if (transaction["isRevenue"] == true) {
-        return sum + transaction["amount"];
+      if (transaction.isRevenu == true) {
+        return sum + transaction.amount;
       } else {
         return sum;
       }
     });
 
     double totalAmountDepenses = widget.transactions.fold(0.0, (sum, transaction) {
-      if (transaction["isRevenue"] == false) {
-        return sum + transaction["amount"];
+      if (transaction.isRevenu == false) {
+        return sum + transaction.amount;
       } else {
         return sum;
       }
     });
+
+    List<PieChartSectionData> pieChartSections = widget.transactions.map((transaction) => buildSectionPieChart(transaction))
+        .toList();
 
     double difference = totalAmountRevenus - totalAmountDepenses;
 
@@ -70,31 +74,8 @@ class _Home extends State<Home> {
                           children: [
                             PieChart(
                               PieChartData(
-                                sections: [
-                                  PieChartSectionData(
-                                    color: Theme.of(context).primaryColor,
-                                    value: totalAmountRevenus,
-                                    title: '$totalAmountRevenus',
-                                    radius: 50,
-                                    titleStyle: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context).primaryColorLight,
-                                    ),
-                                  ),
-                                  PieChartSectionData(
-                                    color: Theme.of(context).primaryColorDark,
-                                    value: totalAmountDepenses,
-                                    title: '$totalAmountDepenses',
-                                    radius: 50,
-                                    titleStyle: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ],
-                                centerSpaceRadius: 80,
+                                sections: pieChartSections,
+                                centerSpaceRadius: 100,
                                 sectionsSpace: 5,
                               ),
                             ),
@@ -121,60 +102,18 @@ class _Home extends State<Home> {
     );
   }
 
-  void _showAddTransactionDialog(BuildContext context, bool isRevenue) {
-    TextEditingController amountController = TextEditingController();
-    TextEditingController descriptionController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Ajouter une opération"),
-          backgroundColor: Theme.of(context).primaryColor,
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextFormField(
-                controller: amountController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: "Montant",
-                  labelStyle: TextStyle(color: Colors.white),
-                ),
-              ),
-              TextFormField(
-                controller: descriptionController,
-                keyboardType: TextInputType.text,
-                decoration: const InputDecoration(
-                  labelText: "Libellé",
-                  labelStyle: TextStyle(color: Colors.white),
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("Annuler"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (descriptionController.text.isNotEmpty && amountController.text.isNotEmpty) {
-                  setState(() {
-                    widget.transactions.add({
-                      "amount": double.parse(amountController.text),
-                      "description": descriptionController.text,
-                      "isRevenue": isRevenue,
-                    });
-                  });
-                }
-                Navigator.pop(context); // Ferme la boîte
-              },
-              child: const Text("Ajouter"),
-            ),
-          ],
-        );
-      },
+  PieChartSectionData buildSectionPieChart(Transaction transaction){
+    return
+      PieChartSectionData(
+      color: Theme.of(context).primaryColor,
+      value: transaction.amount,
+      title: transaction.amount.toString(),
+      radius: 50,
+      titleStyle: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+        color: Theme.of(context).primaryColorLight,
+      ),
     );
   }
 

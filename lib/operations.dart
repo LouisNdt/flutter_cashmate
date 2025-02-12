@@ -1,9 +1,10 @@
 import 'package:cashmate/home.dart';
+import 'package:cashmate/model/Transaction.dart';
 import 'package:flutter/material.dart';
 
 class Operations extends StatefulWidget {
   const Operations({super.key, required this.transactions});
-  final List<Map<String, dynamic>> transactions; // Ajoute cette ligne
+  final List<Transaction> transactions; // Ajoute cette ligne
 
   @override
   State<StatefulWidget> createState() => _Operations();
@@ -56,18 +57,18 @@ class _Operations extends State<Operations> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           Text(
-                            transaction["category"],
+                            transaction.description,
                             style: TextStyle(
                               fontSize: 18,
                               color: Theme.of(context).primaryColorLight,
                             ),
                           ),
                           Text(
-                            "${transaction["amount"]} €",
+                            "${transaction.amount} €",
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: transaction["isRevenue"]
+                              color: transaction.isRevenu
                                   ? Colors.green
                                   : Colors.red,
                             ),
