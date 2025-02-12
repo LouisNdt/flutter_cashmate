@@ -44,15 +44,24 @@ class _BudgetCreationState extends State<BudgetCreation> {
       body: Column(
         children: [
           LinearProgressIndicator(value: (_currentPage + 1) / categories.length),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              IconButton(onPressed: () {
+                _nextPage();
+              }, icon: Icon(Icons.check,size: 30, color: Theme.of(context).primaryColorLight,)),
+            ],
+          ),
           Expanded(
               child: PageView.builder(
-                controller: _pageController,
-                itemCount: categories.length,
+                  controller: _pageController,
+                  itemCount: categories.length,
                   itemBuilder: (context, index) {
                     return _buildCategoryPage(categories[index], totalRevenus, totalDepenses);
                   }
               )
           ),
+
           Text("Dépenses totales : $totalDepenses", style: const TextStyle(fontSize: 14),),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -65,7 +74,6 @@ class _BudgetCreationState extends State<BudgetCreation> {
               }, icon: const Icon(Icons.navigate_next),)
             ],
           )
-
         ],
       )
     );

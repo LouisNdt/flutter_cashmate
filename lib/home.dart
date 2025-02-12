@@ -107,7 +107,7 @@ class _Home extends State<Home> {
       color: Theme.of(context).primaryColor,
       value: transaction.amount,
       title: transaction.amount.toString(),
-      radius: 50,
+      radius: 70,
       titleStyle: TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.bold,
