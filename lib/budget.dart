@@ -21,6 +21,22 @@ class _BudgetCreationState extends State<BudgetCreation> {
   int _currentPage = 0;
 
   @override
+  void initState() {
+    super.initState();
+    _pageController.addListener(() {
+      setState(() {
+        _currentPage = _pageController.page!.round();
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
 
     return Scaffold(
