@@ -66,44 +66,108 @@ class _Home extends State<Home> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: null,
-      body: Stack(
-          children: [
-            Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Text("Cash Mate", style: TextStyle(fontSize: 30, color: Theme.of(context).primaryColorLight),),
-                    SizedBox(
-                        height: 250, // Définir une hauteur pour le PieChart
-                        child: Stack(
-                          children: [
-                            PieChart(
-                              PieChartData(
-                                sections: pieChartSections,
-                                centerSpaceRadius: 100,
-                                sectionsSpace: 5,
-                              ),
-                            ),
-                            Center(
-                              child: Text(
-                                "$differenceTxt €", style: TextStyle(fontSize: 30, color: symbolColor, fontWeight: FontWeight.bold),
-                              ),
-                            )
-                          ],
-                        )
+      body: widget.transactions.isEmpty ? buildEmptyBudgetScreen() :  buildPieChart(pieChartSections, differenceTxt, symbolColor)
+    );
+  }
 
-                    ),
-                    ElevatedButton(
-                        onPressed: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const BudgetCreation()));
-                        },
-                        child: Text("Créer mon budget")),
-                    const Text("Estime rapidement ta capacité d'épargne mensuelle !",)
-                  ],
-                )
+  Widget buildEmptyBudgetScreen() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.account_balance_wallet_rounded, // Icône de portefeuille
+            size: 80,
+            color: Theme.of(context).primaryColor,
+          ),
+          const SizedBox(height: 20),
+          Text(
+            "Aucun budget défini 🧐",
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).hintColor,
             ),
-          ]
+          ),
+          const SizedBox(height: 10),
+          Text(
+            "Commencez par créer votre premier budget\npour mieux gérer vos finances !",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 16,
+              color: Theme.of(context).primaryColorLight,
+            ),
+          ),
+          const SizedBox(height: 30),
+          ElevatedButton.icon(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const BudgetCreation()));
+            },
+            icon: const Icon(Icons.add),
+            label: const Text("Créer mon budget"),
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              textStyle: const TextStyle(fontSize: 18),
+              backgroundColor: Theme.of(context).primaryColor,
+            ),
+          ),
+        ],
       ),
+    );
+  }
+
+  Widget buildPieChart(List<PieChartSectionData> pieChartSections, String differenceTxt, Color symbolColor) {
+    return Stack(
+        children: [
+          Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Text("Cash Mate", style: TextStyle(fontSize: 30, color: Theme.of(context).primaryColorLight),),
+                  SizedBox(
+                      height: 250, // Définir une hauteur pour le PieChart
+                      child: Stack(
+                        children: [
+                          PieChart(
+                            PieChartData(
+                              sections: pieChartSections.map((section) {
+                                // Création d'une section avec un Tooltip dans le badgeWidget
+                                return PieChartSectionData(
+                                  color: section.color,
+                                  value: section.value,
+                                  title: section.title,
+                                  radius: section.radius,
+                                  titleStyle: section.titleStyle,
+                                  // Ajout du Tooltip dans le badgeWidget
+                                  badgeWidget: Tooltip(
+                                    message: "Catégorie: ${section.title}\nMontant: ${section.value.toStringAsFixed(2)} €", // Le message du tooltip
+                                    child: section.badgeWidget, // L'icône du Tooltip ou autre widget
+                                  ),
+                                );
+                              }).toList(),
+                              centerSpaceRadius: 100,
+                              sectionsSpace: 5,
+                            ),
+                          ),
+                          Center(
+                            child: Text(
+                              "$differenceTxt €", style: TextStyle(fontSize: 30, color: symbolColor, fontWeight: FontWeight.bold),
+                            ),
+                          )
+                        ],
+                      )
+
+                  ),
+                  ElevatedButton(
+                      onPressed: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const BudgetCreation()));
+                      },
+                      child: Text("Créer un nouveau budget")),
+                ],
+              )
+          ),
+        ]
     );
   }
 
@@ -121,7 +185,7 @@ class _Home extends State<Home> {
             color: Theme.of(context).primaryColorDark,
           ),
         ),
-        title: formatAmount(transaction.amount),
+        title: transaction.description,
       radius: 90,
       titleStyle: TextStyle(
         fontSize: 18,
