@@ -44,10 +44,16 @@ class _Home extends State<Home> {
       }
     });
 
-    List<PieChartSectionData> pieChartSections = widget.transactions.where((transaction) => transaction.isRevenu==false).map((transaction) => buildSectionPieChart(transaction))
+    List<PieChartSectionData> pieChartSections = widget.transactions
+        .where((transaction) => transaction.isRevenu == false)
+        .toList()
+        .asMap()
+        .entries
+        .map((entry) => buildSectionPieChart(entry.value, entry.key))
         .toList();
 
-    double difference = totalAmountRevenus - totalAmountDepenses;
+    double difference = double.parse((totalAmountRevenus - totalAmountDepenses).toStringAsFixed(2));
+    String differenceTxt = formatAmount(difference);
 
     if(totalAmountRevenus > totalAmountDepenses) {
       symbolColor = Color.fromRGBO(102, 187, 106, 1);
@@ -66,7 +72,7 @@ class _Home extends State<Home> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    const Text("Cash Mate", style: TextStyle(fontSize: 28),),
+                    Text("Cash Mate", style: TextStyle(fontSize: 30, color: Theme.of(context).primaryColorLight),),
                     SizedBox(
                         height: 250, // Définir une hauteur pour le PieChart
                         child: Stack(
@@ -80,7 +86,7 @@ class _Home extends State<Home> {
                             ),
                             Center(
                               child: Text(
-                                "$difference", style: TextStyle(fontSize: 30, color: symbolColor, fontWeight: FontWeight.bold),
+                                "$differenceTxt €", style: TextStyle(fontSize: 30, color: symbolColor, fontWeight: FontWeight.bold),
                               ),
                             )
                           ],
@@ -101,20 +107,44 @@ class _Home extends State<Home> {
     );
   }
 
-  PieChartSectionData buildSectionPieChart(Transaction transaction){
+  PieChartSectionData buildSectionPieChart(Transaction transaction, int index){
     return
       PieChartSectionData(
-      color: Theme.of(context).primaryColor,
-      value: transaction.amount,
-      title: transaction.amount.toString(),
-      radius: 70,
+      //color: Theme.of(context).primaryColor,
+        color: categoryColors[index % categoryColors.length],
+        value: transaction.amount,
+        badgeWidget: Transform.translate(
+          offset: Offset(0, -20), // Décale l'icône vers le haut
+          child: Icon(
+            transaction.icon,
+            size: 24,
+            color: Theme.of(context).primaryColorDark,
+          ),
+        ),
+        title: formatAmount(transaction.amount),
+      radius: 90,
       titleStyle: TextStyle(
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: FontWeight.bold,
-        color: Theme.of(context).primaryColorLight,
+        color: Theme.of(context).cardColor,
       ),
     );
   }
 
+  final List<Color> categoryColors = [
+    Color(0xFF6A0DAD), // Violet profond
+    Color(0xFF7B1FA2), // Violet foncé
+    Color(0xFF8E24AA), // Mauve intense
+    Color(0xFF9C27B0), // Violet classique
+    Color(0xFFAB47BC), // Violet lumineux mais soutenu
+    Color(0xFFBA68C8), // Lavande foncé
+
+  ];
+
+  String formatAmount(double amount) {
+    return (amount % 1 == 0)
+        ? amount.toInt().toString()
+        : amount.toStringAsFixed(2).replaceAll('.', ',');
+  }
 
 }

@@ -11,10 +11,10 @@ class BudgetCreation extends StatefulWidget {
 
 
 class _BudgetCreationState extends State<BudgetCreation> {
-
   final List<String> categories = ["Salaire", "Autres revenus","Logement", "Alimentation", "Transport", "Esthétique", "Abonnements", "Loisirs", "Recap"];
   final PageController _pageController = PageController();
   final List<Transaction> transactions = [];
+  Map<String, TextEditingController> _controllers = {};
   double totalRevenus =  0;
   double totalDepenses = 0;
   int _currentPage = 0;
@@ -81,8 +81,24 @@ class _BudgetCreationState extends State<BudgetCreation> {
 
   Widget _buildCategoryPage(String category, double totalRevenus, double totalDepenses) {
     if (category == "Recap") {
-      return _buildRecapPage(totalRevenus); // Affiche la page de résumé
+      return _buildRecapPage(totalRevenus);
     }
+
+    if (!_controllers.containsKey(category)) {
+      double existingAmount = transactions
+          .firstWhere((t) => t.description == category, orElse: () => Transaction(description: category, amount: 0.0, isRevenu: false, icon: Icons.category))
+          .amount;
+
+      _controllers[category] = TextEditingController(text: existingAmount > 0 ? existingAmount.toString() : "");
+    }
+    FocusNode categoryFocusNode = FocusNode();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_currentPage == categories.indexOf(category)) {
+        FocusScope.of(context).requestFocus(categoryFocusNode);
+      }
+    });
+
 
     return Padding(
       padding: EdgeInsets.all(20),
@@ -93,8 +109,11 @@ class _BudgetCreationState extends State<BudgetCreation> {
           SizedBox(
             width: 200,
             child: TextField(
+              controller: _controllers[category],
+              focusNode: categoryFocusNode,
               textAlign: TextAlign.center,
               keyboardType: TextInputType.number,
+              onTapOutside: (event) => _nextPage(),
               onSubmitted: (value) => _nextPage(),
               onChanged: (value) {
                 setState(() {
@@ -157,9 +176,31 @@ class _BudgetCreationState extends State<BudgetCreation> {
         totalRevenus += amount;
       }
       // Ajout d'une nouvelle transaction
-      transactions.add(new Transaction(description: category, amount: amount, isRevenu: isRevenu));
+      transactions.add(new Transaction(description: category, amount: amount, isRevenu: isRevenu, icon: getIconForCategory(category)));
     }
   }
 
+  IconData getIconForCategory(String category) {
+    switch (category) {
+      case "Salaire":
+        return Icons.attach_money;
+      case "Autres revenus":
+        return Icons.card_giftcard;
+      case "Logement":
+        return Icons.home;
+      case "Alimentation":
+        return Icons.fastfood;
+      case "Transport":
+        return Icons.directions_car;
+      case "Esthétique":
+        return Icons.brush;
+      case "Abonnements":
+        return Icons.subscriptions;
+      case "Loisirs":
+        return Icons.sports_esports;
+      default:
+        return Icons.category; // Icône générique par défaut
+    }
+  }
 
 }

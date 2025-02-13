@@ -11,10 +11,11 @@ void main() {
 
 // TODO : clavier number ne permet de cliquer sur "entrée" pour passer à la prochaine "slide"
 // TODO : Finaliser le piechart pour voir clairement les catégories
+// TODO : ajouter focus auto sur les input
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key, required this.transactions});
-  final List<Transaction> transactions; // Ajoute cette ligne
+  final List<Transaction> transactions;
 
 
   @override
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title, required this.transactions});
-  final List<Transaction> transactions; // Ajoute cette ligne
+  final List<Transaction> transactions;
 
 
   final String title;
@@ -42,22 +43,15 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _selectedIndex = 0; // Index de la page actuelle
+  int _selectedIndex = 0;
   late List<Transaction> transactions;
-
-  void _addTransaction(Transaction transaction) {
-    setState(() {
-      transactions.add(transaction);
-    });
-  }
 
   @override
   void initState() {
     super.initState();
-    transactions = List.from(widget.transactions); // ✅ Initialisation ici
+    transactions = List.from(widget.transactions);
   }
 
-  // Changer l'index lorsqu'on clique sur un onglet
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;

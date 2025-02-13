@@ -24,7 +24,6 @@ class _Operations extends State<Operations> {
 
   @override
   Widget build(BuildContext context) {
-    int index = widget.transactions.length;
     return Scaffold(
         extendBodyBehindAppBar: true,
         appBar: null,
